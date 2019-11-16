@@ -30,8 +30,8 @@ namespace Sensors.Distance
             serialPort = device.CreateSerialPort(
                 portName,
                 this.baudRate,
-                Parity.None,
                 8,
+                Parity.None,
                 StopBits.One);
             Init();
         }
