@@ -247,27 +247,32 @@ namespace Meadow.Foundation.ICs.IOExpanders
         //    throw new Exception("Pin is out of range");
         //}
 
-        ///// <summary>
-        ///// Outputs a byte value across all of the pins by writing directly 
-        ///// to the output latch (OLAT) register.
-        ///// </summary>
-        ///// <param name="mask"></param>
-        //public void WriteToPorts(byte mask)
-        //{
-        //    // set all IO to output
-        //    if (_iodir != 0) {
-        //        _iodir = 0;
-        //        _i2cPeripheral.WriteRegister(_IODirectionRegister, _iodir);
-        //    }
-        //    // write the output
-        //    _olat = mask;
-        //    _i2cPeripheral.WriteRegister(_OutputLatchRegister, _olat);
-        //}
+        /// <summary>
+        /// Outputs a byte value across all of the pins by writing directly 
+        /// to the output latch (OLAT) register.
+        /// </summary>
+        /// <param name="mask"></param>
+        public void WriteToPorts(byte mask)
+        {
+            // set all IO to output
+            if (_iodir != 0) {
+                _iodir = 0;
+                _i2cPeripheral.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
+            }
+            // write the output
+            _olat = mask;
+            _i2cPeripheral.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
+        }
 
         protected bool IsValidPin(IPin pin)
         {
             var contains = this.Pins.AllPins.Contains(pin);
             return (this.Pins.AllPins.Contains(pin));
+        }
+
+        protected void ResetPin(IPin pin)
+        {
+            this.SetPortDirection(pin, PortDirectionType.Input);
         }
 
         public IBiDirectionalPort CreateBiDirectionalPort(IPin pin, bool initialState = false, bool glitchFilter = false, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, PortDirectionType initialDirection = PortDirectionType.Input)
