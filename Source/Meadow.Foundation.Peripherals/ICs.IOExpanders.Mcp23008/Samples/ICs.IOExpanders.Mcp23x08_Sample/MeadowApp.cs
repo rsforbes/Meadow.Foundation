@@ -34,18 +34,19 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
                 outie.State = true;
             }
 
-           
-            //while (true) {
-            //    for (int i = 0; i < outs.Count; i++) {
-            //        Console.WriteLine($"i: {i}");
-            //        // turn them all off, except whatever we're on
-            //        for (int j = 0; j < outs.Count; j++) {
-            //            Console.WriteLine($"j: {j}");
-            //            outs[i].State = (i == j);
-            //        }
-            //        Thread.Sleep(500);
-            //    }
-            //}
+
+            while (true) {
+                // loop through all the outputs
+                for (int i = 0; i < outs.Count; i++) {
+                    Console.WriteLine($"i: {i}");
+                    // turn them all off, except whatever we're on
+                    for (int j = 0; j < outs.Count; j++) {
+                        Console.WriteLine($"j: {j}");
+                        outs[j].State = (i == j);
+                    }
+                    Thread.Sleep(500);
+                }
+            }
         }
 
         public void ConfigurePeripherals()
