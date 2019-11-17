@@ -19,7 +19,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 
             while (true) {
                 TestBulkPinWrites(20);
-                TestDigitalOutputPorts(5);
+                TestDigitalOutputPorts(2);
             }
 
         }
@@ -78,7 +78,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
                 for (int i = 0; i < 8; i++) {
                     _mcp.WriteToPorts(mask);
                     mask = (byte)(1 << i);
-                    Thread.Sleep(25);
+                    Thread.Sleep(5);
                 }
             }
         }
