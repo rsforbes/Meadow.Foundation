@@ -74,17 +74,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             Console.WriteLine("Chip Reset.");
 
-            // read in the initial state of the chip
-            _iodir = _i2cPeripheral.ReadRegister(RegisterAddresses.IODirectionRegister);
-            // tried some sleeping, but also has no effect on its reliability
-            //Thread.Sleep(100);
-            Console.WriteLine("IODIR: " + _iodir.ToString("X"));
-            _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
-            //Thread.Sleep(100);
-            Console.WriteLine("GPIO: " + _gpio.ToString("X"));
-            _olat = _i2cPeripheral.ReadRegister(RegisterAddresses.OutputLatchRegister);
-            //Thread.Sleep(100);
-            Console.WriteLine("OLAT: " + _olat.ToString("X")); 
         } 
 
         /// <summary>
@@ -112,6 +101,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _gpio = 0x00;
             _olat = 0x00;
             _gppu = 0x00;
+
+            // read in the initial state of the chip
+            _iodir = _i2cPeripheral.ReadRegister(RegisterAddresses.IODirectionRegister);
+            // tried some sleeping, but also has no effect on its reliability
+            //Thread.Sleep(100);
+            Console.WriteLine("IODIR: " + _iodir.ToString("X"));
+            _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
+            //Thread.Sleep(100);
+            Console.WriteLine("GPIO: " + _gpio.ToString("X"));
+            _olat = _i2cPeripheral.ReadRegister(RegisterAddresses.OutputLatchRegister);
+            //Thread.Sleep(100);
+            Console.WriteLine("OLAT: " + _olat.ToString("X"));
+
         }
 
         /// <summary>
