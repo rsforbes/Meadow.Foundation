@@ -1,0 +1,13 @@
+<Project Sdk="Meadow.Sdk/1.1">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.10.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.Mcp23x08.csproj" />
+  </ItemGroup>
+</Project>

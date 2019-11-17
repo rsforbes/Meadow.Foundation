@@ -271,11 +271,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BA4E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.x74595", "Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Driver\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{C4E371CD-452B-445D-968A-FA2805A13DEE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Mcp23008", "ICs.IOExpanders.Mcp23008", "{240F389E-5109-4266-AE58-04DEAC585F22}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Mcp23x08", "ICs.IOExpanders.Mcp23x08", "{240F389E-5109-4266-AE58-04DEAC585F22}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1A91B800-DC03-4199-AE38-4BD57195416F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.MCP23008", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj", "{E5256D16-2D8E-4A38-913C-863AB9819D53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.Mcp23x08.csproj", "{E5256D16-2D8E-4A38-913C-863AB9819D53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.HT16K33", "ICs.IOExpanders.HT16K33", "{E95B5F1B-244F-4B45-AC8E-B2483DB0C980}"
 EndProject
@@ -303,7 +303,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.TftSpi", "Displays
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8FB70D12-1111-480B-B64C-B8EB65977F58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TFTSPI.csproj", "{1D798CC4-66E8-4BE2-82E7-D87F36DFEFA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TFTSPI", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TFTSPI.csproj", "{1D798CC4-66E8-4BE2-82E7-D87F36DFEFA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9163_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.Tft.ILI9163_Sample\Displays.Tft.ILI9163_Sample.csproj", "{567D2D74-00EE-45A6-8B46-B97692011317}"
 EndProject
@@ -378,6 +378,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL3115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115A2\Driver\Sensors.Atmospheric.MPL3115A2\Sensors.Atmospheric.MPL3115A2.csproj", "{7CAFA9B7-75D9-40F7-85D0-FD534D9199BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Mpl3115A2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115A2\Samples\Sensors.Atmospheric.Mpl3115A2_Sample\Sensors.Atmospheric.Mpl3115A2_Sample.csproj", "{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_Sample\ICs.IOExpanders.Mcp23x08_Sample.csproj", "{97850890-0A4D-4FF7-95C2-E8323CE16E82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -749,6 +751,10 @@ Global
 		{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -937,6 +943,7 @@ Global
 		{EE44DCDF-F3C4-4ACF-A593-8CE018B86648} = {4242C2C7-8B81-41D4-A716-D717B6424C50}
 		{7CAFA9B7-75D9-40F7-85D0-FD534D9199BA} = {50A0527F-7CFF-40E3-B8C5-1BB915139BA5}
 		{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0} = {D9E26608-83A9-4146-8B06-5CF9EF3E4F7A}
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
