@@ -129,10 +129,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.SetPortDirection(pin, PortDirectionType.Output);
 
                 // create the convenience class
-                DigitalOutputPort port = null; //ToDo = new DigitalOutputPort(pin, initialState);
-
-                // return the port
-                return port;
+                return new DigitalOutputPort(this, pin, initialState);
             }
 
             throw new Exception("Pin is out of range");
@@ -272,6 +269,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         protected bool IsValidPin(IPin pin)
         {
+            var contains = this.Pins.AllPins.Contains(pin);
             return (this.Pins.AllPins.Contains(pin));
         }
 

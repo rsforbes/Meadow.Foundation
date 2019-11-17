@@ -16,12 +16,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             } protected bool state;
 
-            protected DigitalOutputPort(
+            public DigitalOutputPort(
                 Mcp23x08 mcpController,
                 IPin pin,
-                IDigitalChannelInfo channel,
                 bool initialState = false)
-                : base(pin, channel, initialState)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState)
             {
                 _mcp = mcpController;
             }
