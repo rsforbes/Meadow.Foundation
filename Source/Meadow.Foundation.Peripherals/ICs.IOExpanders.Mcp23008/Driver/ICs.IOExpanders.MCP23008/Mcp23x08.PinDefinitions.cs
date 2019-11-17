@@ -34,7 +34,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// GP2
             /// </summary>
             public readonly IPin GP2 = new Pin(
-                "GP1", (byte)0x02,
+                "GP2", (byte)0x02,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP2", pullDownCapable:false),
                 }
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// GP5
             /// </summary>
             public readonly IPin GP5 = new Pin(
-                "GP5", (byte)0x00,
+                "GP5", (byte)0x05,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP5", pullDownCapable:false),
                 }
