@@ -111,7 +111,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Apds9960", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D744EA2C-4534-42ED-B7BB-CC511762C509}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Apds9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.APDS9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl362", "Sensors.Motion.Adxl362", "{4E2218F3-0F2C-4E03-A66F-186515BB7BCE}"
 EndProject
@@ -275,7 +275,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1A91
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.Mcp23x08.csproj", "{E5256D16-2D8E-4A38-913C-863AB9819D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_Sample\ICs.IOExpanders.Mcp23x08_Sample.csproj", "{97850890-0A4D-4FF7-95C2-E8323CE16E82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08_OutputSample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_OutputSample\ICs.IOExpanders.Mcp23x08_OutputSample.csproj", "{97850890-0A4D-4FF7-95C2-E8323CE16E82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.HT16K33", "ICs.IOExpanders.HT16K33", "{E95B5F1B-244F-4B45-AC8E-B2483DB0C980}"
 EndProject
@@ -376,6 +376,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL3115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115A2\Driver\Sensors.Atmospheric.MPL3115A2\Sensors.Atmospheric.MPL3115A2.csproj", "{7CAFA9B7-75D9-40F7-85D0-FD534D9199BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Mpl3115A2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115A2\Samples\Sensors.Atmospheric.Mpl3115A2_Sample\Sensors.Atmospheric.Mpl3115A2_Sample.csproj", "{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Mcp23x08_InputSample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_InputSample\ICs.IOExpanders.Mcp23x08_InputSample.csproj", "{7AEAAAF2-5114-4137-BB7A-1F277750B406}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -759,10 +761,14 @@ Global
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.Build.0 = Release|Any CPU
-        {97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97850890-0A4D-4FF7-95C2-E8323CE16E82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AEAAAF2-5114-4137-BB7A-1F277750B406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AEAAAF2-5114-4137-BB7A-1F277750B406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AEAAAF2-5114-4137-BB7A-1F277750B406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AEAAAF2-5114-4137-BB7A-1F277750B406}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -950,6 +956,7 @@ Global
 		{7CAFA9B7-75D9-40F7-85D0-FD534D9199BA} = {50A0527F-7CFF-40E3-B8C5-1BB915139BA5}
 		{BBAEC6E6-82D8-4E55-9AFB-28497F1F78A0} = {D9E26608-83A9-4146-8B06-5CF9EF3E4F7A}
 		{97850890-0A4D-4FF7-95C2-E8323CE16E82} = {1A91B800-DC03-4199-AE38-4BD57195416F}
+		{7AEAAAF2-5114-4137-BB7A-1F277750B406} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -12,9 +13,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Mcp23x08 : IIODevice
     {
         /// <summary>
-        ///     Raised on Interrupt
+        /// Raised on Interrupt
         /// </summary>
         //public event EventHandler InterruptRaised = delegate { }; //ToDo - is this being used??
+        // TODO: i think this event will be useful in the event folks want to
+        // do a parallel read
 
         private readonly II2cPeripheral _i2cPeripheral;
 
@@ -119,7 +122,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin">The pin number to create the port on.</param>
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
-        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false)
+        public IDigitalOutputPort CreateDigitalOutputPort(
+            IPin pin, bool initialState = false)
         {
             if (IsValidPin(pin)) {
                 // setup the port internally for output
@@ -132,19 +136,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception("Pin is out of range");
         }
 
-        //public IDigitalInputPort CreateDigitalInputPort(
-        //    IPin pin,
-        //    InterruptMode interruptMode = InterruptMode.None,
-        //    ResistorMode resistorMode = ResistorMode.Disabled,
-        //    int debounceDuration = 0,
-        //    int glitchFilterCycleCount = 0)
-        //{
-        //    if (pin != null) {
-        //        return device.CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.PullUp);
-        //    }
-
-        //    throw new Exception("Pin is out of range");
-        //}
+        public IDigitalInputPort CreateDigitalInputPort(
+            IPin pin,
+            //TODO the MCP basically supports yes/no for this. so we may need to
+            // revisit the IIODevice interface here
+            InterruptMode interruptMode = InterruptMode.None, 
+            ResistorMode resistorMode = ResistorMode.Disabled
+            //TODO, do we want a debounce?
+            /*int debounceDuration = 0,*/
+            )
+        {
+            if (pin != null) {
+                return new DigitalInputPort(this, pin, interruptMode);
+            }
+            throw new Exception("Pin is out of range");
+        }
 
         /// <summary>
         /// Sets the direction of a particulare port.
@@ -172,39 +178,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        //public void ConfigureInputPort(byte pin, bool enablePullUp = false, bool enableInterrupt = true)
-        //{
-        //    if (IsValidPin(pin))
-        //    {
-        //        // set the port direction
-        //        this.SetPortDirection(pin, PortDirectionType.Input);
+        public void ConfigureInputPort(IPin pin, bool enablePullUp = false, bool enableInterrupt = true)
+        {
+            if (IsValidPin(pin)) {
+                // set the port direction
+                this.SetPortDirection(pin, PortDirectionType.Input);
 
-        //        // refresh out pull up state
-        //        // TODO: do away with this and trust internal state?
-        //        _gppu = _i2cPeripheral.ReadRegister(_PullupResistorConfigurationRegister);
+                // refresh out pull up state
+                // TODO: do away with this and trust internal state?
+                _gppu = _i2cPeripheral.ReadRegister(RegisterAddresses.PullupResistorConfigurationRegister);
 
-        //        _gppu = BitHelpers.SetBit(_gppu, pin, enablePullUp);
+                _gppu = BitHelpers.SetBit(_gppu, (byte)pin.Key, enablePullUp);
 
-        //        _i2cPeripheral.WriteRegister(_PullupResistorConfigurationRegister, _gppu);
+                _i2cPeripheral.WriteRegister(RegisterAddresses.PullupResistorConfigurationRegister, _gppu);
 
-        //        if (enableInterrupt)
-        //        {
-        //            // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-        //            byte gpinten = _i2cPeripheral.ReadRegister(_InterruptOnChangeRegister);
-        //            gpinten = BitHelpers.SetBit(gpinten, pin, true);
+                if (enableInterrupt) {
+                    // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
+                    byte gpinten = _i2cPeripheral.ReadRegister(RegisterAddresses.InterruptOnChangeRegister);
+                    gpinten = BitHelpers.SetBit(gpinten, (byte)pin.Key, true);
 
-        //            // interrupt control register; whether or not the change is based 
-        //            // on default comparison value, or if a change from previous. We 
-        //            // want to raise on change, so we set it to 0, always.
-        //            byte interruptControl = _i2cPeripheral.ReadRegister(_InterruptControlRegister);
-        //            interruptControl = BitHelpers.SetBit(interruptControl, pin, false);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Pin is out of range");
-        //    }
-        //}
+                    // interrupt control register; whether or not the change is based 
+                    // on default comparison value, or if a change from previous. We 
+                    // want to raise on change, so we set it to 0, always.
+                    byte interruptControl = _i2cPeripheral.ReadRegister(RegisterAddresses.InterruptControlRegister);
+                    interruptControl = BitHelpers.SetBit(interruptControl, (byte)pin.Key, false);
+                }
+            } else {
+                throw new Exception("Pin is out of range");
+            }
+        }
 
         /// <summary>
         /// Sets a particular pin's value. If that pin is not 
@@ -230,22 +232,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        //public bool ReadPort(byte pin)
-        //{
-        //    if (IsValidPin(pin))
-        //    {
-        //        // if the pin isn't set for input, configure it
-        //        this.SetPortDirection((byte)pin, PortDirectionType.Input);
+        public bool ReadPort(IPin pin)
+        {
+            if (IsValidPin(pin)) {
+                // if the pin isn't set for input, configure it
+                this.SetPortDirection(pin, PortDirectionType.Input);
 
-        //        // update our GPIO values
-        //        _gpio = _i2cPeripheral.ReadRegister(_GPIORegister);
+                // update our GPIO values
+                _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
 
-        //        // return the value on that port
-        //        return BitHelpers.GetBitValue(_gpio, (byte)pin);
-        //    }
+                // return the value on that port
+                return BitHelpers.GetBitValue(_gpio, (byte)pin.Key);
+            }
 
-        //    throw new Exception("Pin is out of range");
-        //}
+            throw new Exception("Pin is out of range");
+        }
 
         /// <summary>
         /// Outputs a byte value across all of the pins by writing directly 
@@ -262,6 +263,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // write the output
             _olat = mask;
             _i2cPeripheral.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
+        }
+
+        /// <summary>
+        /// Reads a byte value from all of the pins.
+        /// </summary>
+        /// <param name="mask"></param>
+        public byte ReadFromPorts()
+        {
+            // set all IO to input
+            if (_iodir != 1) {
+                _iodir = 1;
+                _i2cPeripheral.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
+            }
+            // read the input
+            _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
+            return _gpio;
         }
 
         protected bool IsValidPin(IPin pin)

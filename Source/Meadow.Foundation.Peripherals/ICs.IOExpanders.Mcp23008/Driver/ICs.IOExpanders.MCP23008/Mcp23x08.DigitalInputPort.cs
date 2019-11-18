@@ -1,22 +1,39 @@
-﻿//using System;
-//using Meadow.Hardware;
+﻿using System;
+using Meadow.Hardware;
 
-//namespace Meadow.Foundation.ICs.IOExpanders
-//{
-//    public partial class Mcp23008
-//    {
-//        public class DigitalInputPort : DigitalInputPortBase
-//        {
-//            public override bool State => throw new NotImplementedException();
+namespace Meadow.Foundation.ICs.IOExpanders
+{
+    public partial class Mcp23x08
+    {
+        public class DigitalInputPort : DigitalInputPortBase
+        {
+            Mcp23x08 _mcp;
 
-//            public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-//            public override int DebounceDuration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-//            public override int GlitchFilterCycleCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public override bool State {
+                get {
+                    return _mcp.ReadPort(this.Pin);
+                }
+            }
 
-//            public override void Dispose()
-//            {
-                
-//            }
-//        }
-//    }
-//}
+            public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public override int DebounceDuration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public override int GlitchFilterCycleCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+            public DigitalInputPort(
+                Mcp23x08 mcpController,
+                IPin pin,
+                InterruptMode interruptMode = InterruptMode.None)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
+            {
+                _mcp = mcpController;
+            }
+
+
+
+            public override void Dispose()
+            {
+
+            }
+        }
+    }
+}
