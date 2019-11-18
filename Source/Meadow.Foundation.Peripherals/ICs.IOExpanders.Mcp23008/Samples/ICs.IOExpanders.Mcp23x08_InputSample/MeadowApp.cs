@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Meadow;
@@ -17,10 +18,10 @@ namespace ICs.IOExpanders.Mcp23x08_InputSample
         {
             ConfigurePeripherals();
 
-//            while (true) {
+            while (true) {
                 TestBulkPinReads(10);
-                //TestDigitalOutputPorts(2);
-//            }
+                TestDigitalInputPorts(10);
+            }
 
         }
 
@@ -46,6 +47,40 @@ namespace ICs.IOExpanders.Mcp23x08_InputSample
 
                 Thread.Sleep(100);
             }
+        }
+
+        void TestDigitalInputPorts(int loopCount)
+        {
+            var in00 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP0);
+            var in01 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP1);
+            var in02 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP2);
+            var in03 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP3);
+            var in04 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP4);
+            var in05 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP5);
+            var in06 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP6);
+            var in07 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP7);
+
+            var innies = new List<IDigitalInputPort>() {
+                in00, in01, in02, in03, in04, in05, in06, in07
+            };
+
+            // read all the ports, sleep for 100ms and repeat a few times.
+            for (int l = 0; l < loopCount; l++) {
+                foreach (var innie in innies) {
+                    Console.WriteLine($"InputPort {innie.Pin.Name} Read: {innie.State}");
+                }
+                Thread.Sleep(100);
+            }
+
+            // cleanup
+            for (int i = 0; i < innies.Count; i++) {
+                innies[i].Dispose();
+            }
+        }
+
+        void TestInterrupts(int loopCount)
+        {
+
         }
     }
 }

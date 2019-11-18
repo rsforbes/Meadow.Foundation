@@ -64,6 +64,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
                 }
             }
 
+            // cleanup
             for (int i = 0; i < outs.Count; i++) {
                 outs[i].Dispose();
             }

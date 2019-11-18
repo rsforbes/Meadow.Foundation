@@ -15,11 +15,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Raised on Interrupt
         /// </summary>
-        //public event EventHandler InterruptRaised = delegate { }; //ToDo - is this being used??
+        //public event EventHandler InterruptRaised = delegate { };
         // TODO: i think this event will be useful in the event folks want to
         // do a parallel read
 
         private readonly II2cPeripheral _i2cPeripheral;
+        private readonly IDigitalInputPort _interruptPort;
 
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
@@ -45,10 +46,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// don't want to calculate the address.
         /// </summary>
         /// <param name="i2cBus"></param>
-        /// <param name="pinA0"></param>
-        /// <param name="pinA1"></param>
-        /// <param name="pinA2"></param>
-        public Mcp23x08(II2cBus i2cBus, bool pinA0, bool pinA1, bool pinA2)
+        /// <param name="pinA0">Whether or not Address0 pin is pulled high.</param>
+        /// <param name="pinA1">Whether or not Address1 pin is pulled high.</param>
+        /// <param name="pinA2">Whether or not Address2 pin is pulled high.</param>
+        /// <param name="interruptPort">Optional IDigitalInputPort used to support
+        /// interrupts. The MCP will notify a single port for an interrupt on
+        /// any input configured pin. The driver takes care of looking up which
+        /// pin the interrupt occurred on, and will raise it on that port, if a port
+        /// is used.</param>
+        public Mcp23x08(II2cBus i2cBus, bool pinA0, bool pinA1, bool pinA2,
+            IDigitalInputPort interruptPort = null)
             : this(i2cBus, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2))
         {
             // nothing goes here
@@ -60,18 +67,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus"></param>
         /// <param name="address"></param>
-        public Mcp23x08(II2cBus i2cBus, byte address = 0x20)
+        public Mcp23x08(II2cBus i2cBus, byte address = 0x20,
+            IDigitalInputPort interruptPort = null)
         {
-            // tried this, based on a forum post, but seems to have no effect.
-            //H.OutputPort SDA = new H.OutputPort(N.Pins.GPIO_PIN_A4, false);
-            //H.OutputPort SCK = new H.OutputPort(N.Pins.GPIO_PIN_A5, false);
-            //SDA.Dispose();
-            //SCK.Dispose();
+            // save our interrupt pin
+            this._interruptPort = interruptPort;
+            if (this._interruptPort != null) {
+                this._interruptPort.Changed += (s, e) => {
+                    //TODO: handle this
+                };
+            }
 
             // configure our i2c bus so we can talk to the chip
             _i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            Console.WriteLine("initialized.");
+            Console.WriteLine("initialized I2C.");
 
             Initialize();
 
@@ -141,9 +151,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //TODO the MCP basically supports yes/no for this. so we may need to
             // revisit the IIODevice interface here
             InterruptMode interruptMode = InterruptMode.None, 
-            ResistorMode resistorMode = ResistorMode.Disabled
-            //TODO, do we want a debounce?
-            /*int debounceDuration = 0,*/
+            ResistorMode resistorMode = ResistorMode.Disabled,
+            //TODO, also we probably don't want glitchFIlter, but we can support
+            // debounce. 
+            int debounceDuration = 0,
+            int glitchFilterCycleCount = 0
             )
         {
             if (pin != null) {
@@ -232,6 +244,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Gets the value of a particular port. If the port is currently configured
+        /// as an output, this will change the configuration.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <returns></returns>
         public bool ReadPort(IPin pin)
         {
             if (IsValidPin(pin)) {
@@ -266,9 +284,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Reads a byte value from all of the pins.
+        /// Reads a byte value from all of the pins. little-endian; the least
+        /// significant bit is the value of GP0. So a byte value of 0x60, or
+        /// 0110 0000, means that pins GP5 and GP6 are high.
         /// </summary>
-        /// <param name="mask"></param>
+        /// <returns>A little-endian byte mask of the pin values.</returns>
         public byte ReadFromPorts()
         {
             // set all IO to input
@@ -281,12 +301,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return _gpio;
         }
 
+        /// <summary>
+        /// Checks whether or not the pin passed in exists on the chip.
+        /// </summary>
         protected bool IsValidPin(IPin pin)
         {
             var contains = this.Pins.AllPins.Contains(pin);
             return (this.Pins.AllPins.Contains(pin));
         }
 
+        /// <summary>
+        /// Sets the pin back to an input
+        /// </summary>
+        /// <param name="pin"></param>
         protected void ResetPin(IPin pin)
         {
             this.SetPortDirection(pin, PortDirectionType.Input);
@@ -332,10 +359,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, int debounceDuration = 0, int glitchFilterCycleCount = 0)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 }
