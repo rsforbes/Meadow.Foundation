@@ -13,11 +13,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Mcp23x08 : IIODevice
     {
         /// <summary>
-        /// Raised on Interrupt
+        /// Raised when the value of a pin configured for input changes. Use in
+        /// conjunction with parallel port reads via ReadFromPorts(). When using
+        /// individual `DigitalInputPort` objects, each one will have their own
+        /// `Changed` event
         /// </summary>
-        //public event EventHandler InterruptRaised = delegate { };
-        // TODO: i think this event will be useful in the event folks want to
-        // do a parallel read
+        // TODO: make a custom event args that has the pin that triggered
+        public event EventHandler InputChanged = delegate { };
 
         private readonly II2cPeripheral _i2cPeripheral;
         private readonly IDigitalInputPort _interruptPort;
@@ -72,22 +74,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             // save our interrupt pin
             this._interruptPort = interruptPort;
+            // TODO: more interrupt stuff to solve
+            // at a minimum, we need to check the interrupt mode and make sure
+            // it's correct, raise an exception if not. also, doc in constructor
+            // what we expect from an interrupt port.
+            //this._interruptPort.InterruptMode = InterruptMode.EdgeRising;
             if (this._interruptPort != null) {
-                this._interruptPort.Changed += (s, e) => {
-                    //TODO: handle this
-                };
+                this._interruptPort.Changed += HandleChangedInterrupt;
             }
 
             // configure our i2c bus so we can talk to the chip
             _i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            Console.WriteLine("initialized I2C.");
-
             Initialize();
+        }
 
-            Console.WriteLine("Chip Reset.");
+        protected void HandleChangedInterrupt(object sender, EventArgs e) {
+            // sus out which pin fired
 
-        } 
+            // raise the event
+
+        }
 
         /// <summary>
         /// Initializes the chip for use:
