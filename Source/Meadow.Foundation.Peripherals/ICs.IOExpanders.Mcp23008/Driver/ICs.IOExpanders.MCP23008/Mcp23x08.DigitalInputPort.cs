@@ -26,6 +26,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
             {
                 _mcp = mcpController;
+
+                // TODO:
+                if (interruptMode != InterruptMode.None) {
+                    //_mcp.InputChanged += (s, e) => { };
+                }
             }
 
 

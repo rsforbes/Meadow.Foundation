@@ -21,7 +21,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         // TODO: make a custom event args that has the pin that triggered
         public event EventHandler InputChanged = delegate { };
 
-        private readonly II2cPeripheral _i2cPeripheral;
+        private readonly IMcpDeviceComms _mcpDevice;
         private readonly IDigitalInputPort _interruptPort;
 
         public PinDefinitions Pins { get; } = new PinDefinitions();
@@ -84,17 +84,31 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // configure our i2c bus so we can talk to the chip
-            _i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            _mcpDevice = new I2cMcpDeviceComms(i2cBus, address);
 
             Initialize();
         }
 
         protected void HandleChangedInterrupt(object sender, EventArgs e) {
+
+            Console.WriteLine("Interrupt triggered.");
+
+            this.RaiseInputChanged();
+
             // sus out which pin fired
+            var intcap = this._mcpDevice.ReadRegister(RegisterAddresses.InterruptCaptureRegister);
+
+            Console.WriteLine($"Input mask: { BitConverter.ToString(new byte[] { intcap }).Replace("-", " ") }");
 
             // raise the event
 
         }
+
+        protected void RaiseInputChanged() {
+            // TODO: return the value of the inputs as a byte
+            this.InputChanged(this, new EventArgs());
+        }
+
 
         /// <summary>
         /// Initializes the chip for use:
@@ -114,7 +128,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // the chip will automatically write all registers sequentially.
-            _i2cPeripheral.WriteRegisters(RegisterAddresses.IODirectionRegister, buffers);
+            _mcpDevice.WriteRegisters(RegisterAddresses.IODirectionRegister, buffers);
 
             // save our state
             _iodir = buffers[0];
@@ -123,12 +137,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _gppu = 0x00;
 
             // read in the initial state of the chip
-            _iodir = _i2cPeripheral.ReadRegister(RegisterAddresses.IODirectionRegister);
+            _iodir = _mcpDevice.ReadRegister(RegisterAddresses.IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
             Console.WriteLine("IODIR: " + _iodir.ToString("X"));
-            _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
+            _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
             Console.WriteLine("GPIO: " + _gpio.ToString("X"));
-            _olat = _i2cPeripheral.ReadRegister(RegisterAddresses.OutputLatchRegister);
+            _olat = _mcpDevice.ReadRegister(RegisterAddresses.OutputLatchRegister);
             Console.WriteLine("OLAT: " + _olat.ToString("X"));
 
         }
@@ -165,7 +179,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             int glitchFilterCycleCount = 0
             )
         {
-            if (pin != null) {
+            if (IsValidPin(pin)) {
+                this.ConfigureInputPort(
+                    pin,
+                    resistorMode == ResistorMode.PullUp ? true : false,
+                    interruptMode != InterruptMode.None ? true : false
+                    );
                 return new DigitalInputPort(this, pin, interruptMode);
             }
             throw new Exception("Pin is out of range");
@@ -190,7 +209,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 // set the IODIR bit and write the setting
                 _iodir = BitHelpers.SetBit(_iodir, (byte)pin.Key, (byte)direction);
-                _i2cPeripheral.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
+                _mcpDevice.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
             }
             else {
                 throw new Exception("Pin is out of range");
@@ -205,21 +224,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 // refresh out pull up state
                 // TODO: do away with this and trust internal state?
-                _gppu = _i2cPeripheral.ReadRegister(RegisterAddresses.PullupResistorConfigurationRegister);
+                _gppu = _mcpDevice.ReadRegister(RegisterAddresses.PullupResistorConfigurationRegister);
 
                 _gppu = BitHelpers.SetBit(_gppu, (byte)pin.Key, enablePullUp);
 
-                _i2cPeripheral.WriteRegister(RegisterAddresses.PullupResistorConfigurationRegister, _gppu);
+                _mcpDevice.WriteRegister(RegisterAddresses.PullupResistorConfigurationRegister, _gppu);
 
                 if (enableInterrupt) {
+                    Console.WriteLine($"Enabling interrupt");
                     // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-                    byte gpinten = _i2cPeripheral.ReadRegister(RegisterAddresses.InterruptOnChangeRegister);
+                    byte gpinten = _mcpDevice.ReadRegister(RegisterAddresses.InterruptOnChangeRegister);
                     gpinten = BitHelpers.SetBit(gpinten, (byte)pin.Key, true);
 
                     // interrupt control register; whether or not the change is based 
                     // on default comparison value, or if a change from previous. We 
                     // want to raise on change, so we set it to 0, always.
-                    byte interruptControl = _i2cPeripheral.ReadRegister(RegisterAddresses.InterruptControlRegister);
+                    byte interruptControl = _mcpDevice.ReadRegister(RegisterAddresses.InterruptControlRegister);
                     interruptControl = BitHelpers.SetBit(interruptControl, (byte)pin.Key, false);
                 }
             } else {
@@ -244,7 +264,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 _olat = BitHelpers.SetBit(_olat, (byte)pin.Key, value);
 
                 // write to the output latch (actually does the output setting)
-                _i2cPeripheral.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
+                _mcpDevice.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
             }
             else {
                 throw new Exception("Pin is out of range");
@@ -264,7 +284,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.SetPortDirection(pin, PortDirectionType.Input);
 
                 // update our GPIO values
-                _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
+                _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
 
                 // return the value on that port
                 return BitHelpers.GetBitValue(_gpio, (byte)pin.Key);
@@ -283,11 +303,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // set all IO to output
             if (_iodir != 0) {
                 _iodir = 0;
-                _i2cPeripheral.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
+                _mcpDevice.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
             }
             // write the output
             _olat = mask;
-            _i2cPeripheral.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
+            _mcpDevice.WriteRegister(RegisterAddresses.OutputLatchRegister, _olat);
         }
 
         /// <summary>
@@ -301,10 +321,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // set all IO to input
             if (_iodir != 1) {
                 _iodir = 1;
-                _i2cPeripheral.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
+                _mcpDevice.WriteRegister(RegisterAddresses.IODirectionRegister, _iodir);
             }
             // read the input
-            _gpio = _i2cPeripheral.ReadRegister(RegisterAddresses.GPIORegister);
+            _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
             return _gpio;
         }
 
@@ -326,17 +346,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             this.SetPortDirection(pin, PortDirectionType.Input);
         }
 
+
+        // TODO: all these can go away when we get interface implementation 
+        // support from C# 8 into the Meadow.Core project. It won't work today,
+        // even though it's set to C# 8 because the project references the
+        // .NET 4.7.2 runtime. After the latest Mono rebase we'll be able to
+        // move it to Core 3.
+
         public IBiDirectionalPort CreateBiDirectionalPort(IPin pin, bool initialState = false, bool glitchFilter = false, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, PortDirectionType initialDirection = PortDirectionType.Input)
         {
             throw new NotImplementedException();
         }
 
         public IAnalogInputPort CreateAnalogInputPort(IPin pin, float voltageReference = 3.3F)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPwmPort CreatePwmPort(IPin pin, float frequency = 100, float dutyCycle = 0)
         {
             throw new NotImplementedException();
         }
@@ -366,6 +388,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
-
+        public IPwmPort CreatePwmPort(IPin pin, float frequency = 100, float dutyCycle = 0.5F, bool invert = false)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

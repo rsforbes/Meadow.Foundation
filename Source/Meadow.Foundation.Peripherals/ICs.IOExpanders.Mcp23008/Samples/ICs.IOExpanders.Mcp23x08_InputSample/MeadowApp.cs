@@ -16,21 +16,28 @@ namespace ICs.IOExpanders.Mcp23x08_InputSample
 
         public MeadowApp()
         {
+            Console.WriteLine("Initializing.");
+
             ConfigurePeripherals();
 
-            while (true) {
-                TestBulkPinReads(10);
-                TestDigitalInputPorts(10);
-            }
+            TestInterrupts();
+
+            //while (true) {
+            //    TestBulkPinReads(10);
+            //    TestDigitalInputPorts(10);
+            //}
 
         }
 
         public void ConfigurePeripherals()
         {
+            IDigitalInputPort interruptPort =
+                Device.CreateDigitalInputPort(
+                    Device.Pins.D00,
+                    InterruptMode.EdgeRising);
             // create a new mcp with all the address pins pulled low for
             // an address of 0x20/32
-            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false);
-
+            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
         }
 
         void TestBulkPinReads(int loopCount)
@@ -78,9 +85,21 @@ namespace ICs.IOExpanders.Mcp23x08_InputSample
             }
         }
 
-        void TestInterrupts(int loopCount)
+        void TestInterrupts()
         {
+            Console.WriteLine("Test Interrupts");
+            var in00 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP0, InterruptMode.EdgeRising);
+            //var in01 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP1);
+            //var in02 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP2);
+            //var in03 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP3);
+            //var in04 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP4);
+            //var in05 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP5);
+            //var in06 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP6);
+            //var in07 = _mcp.CreateDigitalInputPort(_mcp.Pins.GP7);
 
+            in00.Changed += (s,e) => {
+                Console.WriteLine("changed event");
+            };
         }
     }
 }
