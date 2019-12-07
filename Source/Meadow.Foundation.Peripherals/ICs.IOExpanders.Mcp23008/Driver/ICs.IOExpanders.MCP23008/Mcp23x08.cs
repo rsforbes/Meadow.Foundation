@@ -70,6 +70,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus"></param>
         /// <param name="address"></param>
         public Mcp23x08(II2cBus i2cBus, byte address = 0x20,
+            IDigitalInputPort interruptPort = null) :
+            // use the internal constructor that takes an IMcpDeviceComms
+            this (new I2cMcpDeviceComms(i2cBus, address), interruptPort)
+        {
+
+            
+        }
+
+        public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelect,
+            IDigitalInputPort interruptPort = null) :
+            this (new SpiMcpDeviceComms(spiBus, chipSelect), interruptPort)
+        {
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="interruptPort"></param>
+        internal Mcp23x08(
+            IMcpDeviceComms device,
             IDigitalInputPort interruptPort = null)
         {
             // save our interrupt pin
@@ -83,9 +105,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this._interruptPort.Changed += HandleChangedInterrupt;
             }
 
-            // configure our i2c bus so we can talk to the chip
-            _mcpDevice = new I2cMcpDeviceComms(i2cBus, address);
-
+            _mcpDevice = device;
             Initialize();
         }
 
@@ -117,6 +137,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected void Initialize()
         {
+            Console.WriteLine("Mcp23x08.Initialize()");
+
             byte[] buffers = new byte[10];
 
             // IO Direction
@@ -127,8 +149,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 buffers[i] = 0x00; //all zero'd out `00000000`
             }
 
+            Console.WriteLine("here 1");
+
             // the chip will automatically write all registers sequentially.
             _mcpDevice.WriteRegisters(RegisterAddresses.IODirectionRegister, buffers);
+
+            Console.WriteLine("here 2");
 
             // save our state
             _iodir = buffers[0];
