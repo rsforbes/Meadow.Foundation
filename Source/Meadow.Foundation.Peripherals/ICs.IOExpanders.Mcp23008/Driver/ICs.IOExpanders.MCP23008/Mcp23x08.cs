@@ -74,15 +74,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // use the internal constructor that takes an IMcpDeviceComms
             this (new I2cMcpDeviceComms(i2cBus, address), interruptPort)
         {
-
-            
+            // nothing goes here
         }
 
         public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelect,
+            bool pinA0, bool pinA1,
             IDigitalInputPort interruptPort = null) :
-            this (new SpiMcpDeviceComms(spiBus, chipSelect), interruptPort)
+            this(new SpiMcpDeviceComms(spiBus, chipSelect,
+                McpAddressTable.GetAddressFromPins(pinA0, pinA1, false)),
+                interruptPort)
         {
+            // nothing goes here
+        }
 
+        public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelect,
+            byte address = 0x20, // all low 
+            IDigitalInputPort interruptPort = null) :
+            this (new SpiMcpDeviceComms(spiBus, chipSelect, address), interruptPort)
+        {
+            // nothing goes here
         }
 
         /// <summary>
@@ -165,11 +175,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // read in the initial state of the chip
             _iodir = _mcpDevice.ReadRegister(RegisterAddresses.IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
-            Console.WriteLine("IODIR: " + _iodir.ToString("X"));
+            Console.WriteLine($"IODIR: {_iodir.ToString("X")}");
             _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
-            Console.WriteLine("GPIO: " + _gpio.ToString("X"));
+            Console.WriteLine($"GPIO: {_gpio.ToString("X")}");
             _olat = _mcpDevice.ReadRegister(RegisterAddresses.OutputLatchRegister);
-            Console.WriteLine("OLAT: " + _olat.ToString("X"));
+            Console.WriteLine($"OLAT: {_olat.ToString("X")}");
 
         }
 

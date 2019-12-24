@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -21,12 +22,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        internal class SpiMcpDeviceComms : SpiPeripheral, IMcpDeviceComms
+        internal class SpiMcpDeviceComms : SpiPeripheralWithAddress, IMcpDeviceComms
         {
-            public SpiMcpDeviceComms(ISpiBus bus, IDigitalOutputPort chipSelect)
-                : base(bus, chipSelect)
+            public SpiMcpDeviceComms(ISpiBus bus, IDigitalOutputPort chipSelect,
+                byte peripheralAddress)
+                : base(bus, chipSelect, peripheralAddress)
             {
             }
         }
+
     }
 }
