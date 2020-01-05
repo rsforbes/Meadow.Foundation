@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Radio
 {
     public class Nrf24L01
     {
@@ -97,7 +97,6 @@ namespace Meadow.Foundation.Displays
         #region Fields
 
         protected IDigitalOutputPort chipEnablePort; //controls Rx/Tx mode
-        protected IDigitalOutputPort chipSelectPort; //CSN
         protected IDigitalInputPort interuptPort; //IRQ
         protected ISpiPeripheral _sensor;
         protected SpiBus spi;
@@ -220,14 +219,17 @@ namespace Meadow.Foundation.Displays
         //   spiReceive = new byte[Width * Height / 8];
 
             chipEnablePort = device.CreateDigitalOutputPort(chipEnablePin, true);
-            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, true);
             interuptPort = device.CreateDigitalInputPort(interuptPin, InterruptMode.EdgeFalling);
             interuptPort.Changed += InteruptPort_Changed;
+
+            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, true);
 
             spi = (SpiBus)spiBus;
             _sensor = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize(outputPower, dataRate, channel);
+
+            InitializePipe();
         }
 
         #endregion Constructors
