@@ -7,29 +7,33 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 using SimpleJpegDecoder;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Ili9341 display;
+        St7789 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            var spiBus = Device.CreateSpiBus();
+            //var spiBus = Device.CreateSpiBus();
 
-            display = new Ili9341
+            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
+            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+
+            display = new St7789
             (
                 device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D13,
-                dcPin: Device.Pins.D14,
-                resetPin: Device.Pins.D15,
-                width: 240, height: 320
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
+                width: 240, height: 240
             );
 
             graphics = new GraphicsLibrary(display);
@@ -79,7 +83,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             graphics.DrawRectangle(0, 0, 240, 320, Color.White, true);
 
             int x = 0;
-            int y = (320 - decoder.Height) / 2; 
+            int y = (240 - decoder.Height) / 2; 
             byte r, g, b;
 
             for (int i = 0; i < jpg.Length; i += 3)
