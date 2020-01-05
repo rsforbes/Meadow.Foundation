@@ -25,6 +25,8 @@ namespace Radio.Nrf24L01_Sample
                 packetSize: 20);
 
             Console.WriteLine("radion instance created");
+
+            TestSender();
         }
 
         void TestSender()

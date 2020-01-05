@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Displays.Pcd8854_Sample
+namespace Radio.Nrf24L01_Sample
 {
     class Program
     {
