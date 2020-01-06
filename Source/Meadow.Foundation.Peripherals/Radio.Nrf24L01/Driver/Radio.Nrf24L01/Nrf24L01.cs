@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Radio
         /// <summary>
         /// nRF24L01 Working Mode
         /// </summary>
-        public WorkingModeType WorkingMode { get => ReadWorkwingMode(); set => SetWorkingMode(value); }
+        public WorkingModeType WorkingMode { get => ReadWorkingMode(); set => SetWorkingMode(value); }
 
         /// <summary>
         /// nRF24L01 Pipe 0
@@ -215,11 +215,8 @@ namespace Meadow.Foundation.Radio
             OutputPowerType outputPower = OutputPowerType.N00dBm,
             DataRateType dataRate = DataRateType.Rate2Mbps)
         {
-        //   spiBuffer = new byte[Width * Height / 8];
-        //   spiReceive = new byte[Width * Height / 8];
-
             chipEnablePort = device.CreateDigitalOutputPort(chipEnablePin, true);
-            interuptPort = device.CreateDigitalInputPort(interuptPin, InterruptMode.EdgeFalling);
+            interuptPort = device.CreateDigitalInputPort(interuptPin, InterruptMode.EdgeFalling, ResistorMode.PullUp);
             interuptPort.Changed += InteruptPort_Changed;
 
             var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, true);
@@ -637,7 +634,7 @@ namespace Meadow.Foundation.Radio
         /// Read nRF24L01 Working Mode
         /// </summary>
         /// <returns>Working Mode</returns>
-        internal WorkingModeType ReadWorkwingMode()
+        internal WorkingModeType ReadWorkingMode()
         {
             // Details in the Datasheet P53
             Span<byte> readData = WriteRead(Command.NRF_R_REGISTER, Register.NRF_CONFIG, 1);

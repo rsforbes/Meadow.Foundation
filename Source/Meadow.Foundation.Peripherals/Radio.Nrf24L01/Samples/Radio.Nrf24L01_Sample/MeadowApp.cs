@@ -19,12 +19,12 @@ namespace Radio.Nrf24L01_Sample
 
             radio = new Nrf24L01(device: Device,
                 spiBus: spi,
-                chipEnablePin: Device.Pins.D00,
-                chipSelectPin: Device.Pins.D01,
+                chipEnablePin: Device.Pins.D01,
+                chipSelectPin: Device.Pins.D00,
                 interuptPin: Device.Pins.D02,
                 packetSize: 20);
 
-            Console.WriteLine("radion instance created");
+            Console.WriteLine("radio instance created");
 
             TestSender();
         }
