@@ -1,0 +1,19 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Ads1x15</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ICs.ADCs.Ads1x15</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, ADCs, Ads1x15, Ads1015, Ads1115, Analog, Digital, Converter</PackageTags>    
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Driver for Ads1015 and Ads1115 analog to digital converters</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.12.2" />
+  </ItemGroup>
+</Project>
